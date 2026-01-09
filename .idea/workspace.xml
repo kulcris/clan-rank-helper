@@ -57,6 +57,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Gradle.Build clan-rank-helper.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.clan-rank-helper [:com.clanrankhelper.ClanRankHelperPluginTest.main()].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.clan-rank-helper [:com.clanrankhelper.ClanRankHelperTest.main()].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.clan-rank-helper [:com.sanity.clanrankhelper.ClanRankHelperTest.main()].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.clan-rank-helper [:com.sanity.clanrankhelper.PluginLauncher.main()].executor&quot;: &quot;Run&quot;,
@@ -74,8 +75,8 @@
 }</component>
   <component name="RunManager" selected="Application.RuneLite">
     <configuration name="RuneLite" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.clanrankhelper.ClanRankHelperTest" />
-      <module name="sanity-clan-rank-helper.test" />
+      <option name="MAIN_CLASS_NAME" value="com.clanrankhelper.ClanRankHelperPluginTest" />
+      <module name="clan-rank-helper.test" />
       <option name="VM_PARAMETERS" value="-ea --add-opens java.desktop/java.awt=ALL-UNNAMED" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -132,7 +133,7 @@
       <option name="presentableId" value="Default" />
       <updated>1767980665994</updated>
       <workItem from="1767980667288" duration="8698000" />
-      <workItem from="1767994585815" duration="1870000" />
+      <workItem from="1767994585815" duration="2986000" />
     </task>
     <servers />
   </component>
