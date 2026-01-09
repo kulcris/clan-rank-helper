@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Plugin-Id: sanity-clan-rank-helper
+Plugin-Provider: Sanity
+Plugin-Description: Shows clan members who need rank changes based on Sa
+ nity API
+Plugin-License: BSD-2-Clause
+
