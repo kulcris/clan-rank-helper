@@ -1,4 +1,4 @@
-package com.sanity.clanrankhelper;
+package com.clanrankhelper;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
@@ -7,7 +7,7 @@ import net.runelite.client.config.ConfigSection;
 
 import java.awt.Color;
 
-@ConfigGroup("sanityclanrankhelper")
+@ConfigGroup("clanrankhelper")
 public interface ClanRankHelperConfig extends Config
 {
     @ConfigSection(
@@ -37,19 +37,33 @@ public interface ClanRankHelperConfig extends Config
         name = "API URL",
         description = "URL to fetch pending rank changes. Must return JSON array: [{\"mainRSN\": \"PlayerName\", \"osrsName\": \"TargetRank\"}, ...]",
         section = apiSection,
-        position = 0
+        position = 0,
+        warning = "This plugin submits your IP address to a 3rd party website not controlled or verified by the RuneLite Developers."
     )
     default String apiUrl()
     {
-        return "https://sanityosrs.com/api/user/rankupnames";
+        return "";
+    }
+
+    @ConfigItem(
+        keyName = "googleSheetsUrl",
+        name = "Google Sheets URL",
+        description = "URL to a public Google Sheet. Column A = RSN, Column B = Rank (must be the in-game rank name, not clan-specific name). Leave empty to use API URL instead.",
+        section = apiSection,
+        position = 1,
+        warning = "This plugin submits your IP address to a 3rd party website not controlled or verified by the RuneLite Developers."
+    )
+    default String googleSheetsUrl()
+    {
+        return "";
     }
 
     @ConfigItem(
         keyName = "refreshInterval",
         name = "Refresh Interval (minutes)",
-        description = "How often to refresh rank data from the API",
+        description = "How often to refresh rank data from the API/Google Sheets",
         section = apiSection,
-        position = 1
+        position = 2
     )
     default int refreshInterval()
     {

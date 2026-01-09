@@ -1,4 +1,4 @@
-package com.sanity.clanrankhelper;
+package com.clanrankhelper;
 
 import net.runelite.api.Client;
 import net.runelite.api.widgets.Widget;

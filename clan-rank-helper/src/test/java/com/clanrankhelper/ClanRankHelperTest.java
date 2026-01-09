@@ -1,9 +1,9 @@
-package com.sanity.clanrankhelper;
+package com.clanrankhelper;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class PluginLauncher
+public class ClanRankHelperTest
 {
     public static void main(String[] args) throws Exception
     {

@@ -1,4 +1,4 @@
-package com.sanity.clanrankhelper;
+package com.clanrankhelper;
 
 import net.runelite.api.Client;
 import net.runelite.client.ui.overlay.OverlayPanel;
@@ -51,9 +51,23 @@ public class ClanRankHelperOverlay extends OverlayPanel
         }
 
         Map<String, String> pendingChanges = plugin.getPendingRankChanges();
+        
+        // Always show overlay for debugging
         if (pendingChanges.isEmpty())
         {
-            return null;
+            panelComponent.getChildren().add(TitleComponent.builder()
+                .text("Clan Rank Helper")
+                .color(Color.YELLOW)
+                .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                .left("No API data loaded")
+                .leftColor(Color.GRAY)
+                .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                .left("Check API URL in config")
+                .leftColor(Color.GRAY)
+                .build());
+            return super.render(graphics);
         }
 
         // Build list of pending changes - show all confirmed to need a change
