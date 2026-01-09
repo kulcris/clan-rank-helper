@@ -4,21 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5e606928-55fe-4826-996b-baf1baf7838b" name="Changes" comment="" />
+    <list default="true" id="7cf0012d-7e9b-4aea-9ff8-cabe0fac51ce" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ExternalProjectsData">
-    <projectState path="$PROJECT_DIR$/clan-rank-helper">
+    <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
   </component>
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
-        <task path="$PROJECT_DIR$/clan-rank-helper">
+        <task path="$PROJECT_DIR$">
           <activation />
         </task>
         <projects_view>
@@ -46,48 +49,39 @@
       </state>
     </system>
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 5
-}</component>
-  <component name="ProjectId" id="381x1oNdqpPLGu4tqc34e58qRIc" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="382VhIX5oKttB7tzQ7tzIcWuiZt" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Build clan-rank-helper.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.clan-rank-helper [:com.clanrankhelper.ClanRankHelperPluginTest.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.clan-rank-helper [:com.clanrankhelper.ClanRankHelperTest.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.clan-rank-helper [:com.sanity.clanrankhelper.ClanRankHelperTest.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.clan-rank-helper [:com.sanity.clanrankhelper.PluginLauncher.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.clan-rank-helper [:net.runelite.client.RuneLite.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.clan-rank-helper [build].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Ivan8/Downloads/clan-rank-helper(3)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.clan-rank-helper [build].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Ivan8/AppData/Roaming/JetBrains/PyCharmCE2021.3/scratches/ascent/clan-rank-helper/clan-rank-helper",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Application.RuneLite">
-    <configuration name="RuneLite" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.clanrankhelper.ClanRankHelperPluginTest" />
-      <module name="clan-rank-helper.test" />
-      <option name="VM_PARAMETERS" value="-ea --add-opens java.desktop/java.awt=ALL-UNNAMED" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+}]]></component>
+  <component name="RunManager">
     <configuration name="clan-rank-helper [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/clan-rank-helper" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
+        <option name="scriptParameters" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -107,10 +101,6 @@
       <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
-    <list>
-      <item itemvalue="Application.RuneLite" />
-      <item itemvalue="Gradle.clan-rank-helper [build]" />
-    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.clan-rank-helper [build]" />
@@ -127,13 +117,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="5e606928-55fe-4826-996b-baf1baf7838b" name="Changes" comment="" />
-      <created>1767980665994</created>
+      <changelist id="7cf0012d-7e9b-4aea-9ff8-cabe0fac51ce" name="Changes" comment="" />
+      <created>1767997770143</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1767980665994</updated>
-      <workItem from="1767980667288" duration="8698000" />
-      <workItem from="1767994585815" duration="2986000" />
+      <updated>1767997770143</updated>
+      <workItem from="1767997771246" duration="964000" />
     </task>
     <servers />
   </component>
