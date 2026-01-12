@@ -12,13 +12,14 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,9 @@ public class ClanRankHelperPlugin extends Plugin
 
     @Inject
     private Gson gson;
+
+    @Inject
+    private OkHttpClient okHttpClient;
 
     @Getter
     private final Map<String, String> pendingRankChanges = new ConcurrentHashMap<>();
@@ -98,20 +102,18 @@ public class ClanRankHelperPlugin extends Plugin
     @Override
     protected void startUp() throws Exception
     {
-        log.debug("Clan Rank Helper starting up ===");
+        log.debug("Clan Rank Helper starting up");
         overlayManager.add(overlay);
         overlayManager.add(clanChatOverlay);
-        log.debug("Overlays added");
         
         executor = Executors.newSingleThreadScheduledExecutor();
         
         // Fetch immediately on startup
-        log.debug("Submitting fetch task");
         executor.submit(this::fetchRankData);
         
         // Then refresh periodically based on config
         scheduleRefresh();
-        log.debug("Clan Rank Helper started ===");
+        log.debug("Clan Rank Helper started");
     }
 
     @Override
@@ -167,9 +169,6 @@ public class ClanRankHelperPlugin extends Plugin
         try
         {
             // Convert Google Sheets URL to CSV export URL
-            // Input: https://docs.google.com/spreadsheets/d/SHEET_ID/edit?usp=sharing
-            // Output: https://docs.google.com/spreadsheets/d/SHEET_ID/export?format=csv
-            
             String csvUrl = convertToCsvUrl(sheetsUrl);
             if (csvUrl == null)
             {
@@ -179,73 +178,66 @@ public class ClanRankHelperPlugin extends Plugin
             
             log.debug("Clan Rank Helper: Fetching from Google Sheets: {}", csvUrl);
             
-            URL url = new URL(csvUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("User-Agent", "RuneLite-ClanRankHelper");
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
-            conn.setInstanceFollowRedirects(true);
+            Request request = new Request.Builder()
+                .url(csvUrl)
+                .header("User-Agent", "RuneLite-ClanRankHelper")
+                .build();
             
-            int responseCode = conn.getResponseCode();
-            log.debug("Clan Rank Helper: Response code: {}", responseCode);
-            
-            if (responseCode != 200)
+            try (Response response = okHttpClient.newCall(request).execute())
             {
-                log.error("Clan Rank Helper: Google Sheets returned non-200 response: {}", responseCode);
-                return;
-            }
-            
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            Map<String, String> rankMap = new HashMap<>();
-            String line;
-            boolean firstLine = true;
-            
-            while ((line = reader.readLine()) != null)
-            {
-                // Skip header row if it looks like a header
-                if (firstLine)
+                if (!response.isSuccessful())
                 {
-                    firstLine = false;
-                    String lowerLine = line.toLowerCase();
-                    if (lowerLine.contains("rsn") || lowerLine.contains("name") || lowerLine.contains("rank"))
-                    {
-                        continue; // Skip header
-                    }
+                    log.error("Clan Rank Helper: Google Sheets returned non-200 response: {}", response.code());
+                    return;
                 }
                 
-                // Parse CSV line (handle quoted values)
-                String[] parts = parseCsvLine(line);
-                if (parts.length >= 2)
+                String responseBody = response.body().string();
+                Map<String, String> rankMap = new HashMap<>();
+                BufferedReader reader = new BufferedReader(new StringReader(responseBody));
+                String line;
+                boolean firstLine = true;
+                
+                while ((line = reader.readLine()) != null)
                 {
-                    String rsn = parts[0].trim();
-                    String rank = parts[1].trim();
-                    
-                    if (!rsn.isEmpty() && !rank.isEmpty())
+                    // Skip header row if it looks like a header
+                    if (firstLine)
                     {
-                        rankMap.put(rsn.toLowerCase(), rank);
+                        firstLine = false;
+                        String lowerLine = line.toLowerCase();
+                        if (lowerLine.contains("rsn") || lowerLine.contains("name") || lowerLine.contains("rank"))
+                        {
+                            continue; // Skip header
+                        }
+                    }
+                    
+                    // Parse CSV line (handle quoted values)
+                    String[] parts = parseCsvLine(line);
+                    if (parts.length >= 2)
+                    {
+                        String rsn = parts[0].trim();
+                        String rank = parts[1].trim();
+                        
+                        if (!rsn.isEmpty() && !rank.isEmpty())
+                        {
+                            rankMap.put(rsn.toLowerCase(), rank);
+                        }
                     }
                 }
+                reader.close();
+                
+                log.debug("Clan Rank Helper: Fetched {} entries from Google Sheets", rankMap.size());
+                updateRankData(rankMap);
             }
-            reader.close();
-            conn.disconnect();
-            
-            log.debug("Clan Rank Helper: Fetched {} entries from Google Sheets", rankMap.size());
-            updateRankData(rankMap);
-            
         }
         catch (Exception e)
         {
-            log.error("Clan Rank Helper: Failed to fetch from Google Sheets - {}: {}", e.getClass().getSimpleName(), e.getMessage());
+            log.error("Clan Rank Helper: Failed to fetch from Google Sheets", e);
         }
     }
     
     private String convertToCsvUrl(String sheetsUrl)
     {
         // Handle various Google Sheets URL formats
-        // https://docs.google.com/spreadsheets/d/SHEET_ID/edit...
-        // https://docs.google.com/spreadsheets/d/SHEET_ID/...
-        
         try
         {
             if (sheetsUrl.contains("/spreadsheets/d/"))
@@ -319,60 +311,47 @@ public class ClanRankHelperPlugin extends Plugin
         {
             log.debug("Clan Rank Helper: Fetching from {}", apiUrl);
 
-            URL url = new URL(apiUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty("User-Agent", "RuneLite-ClanRankHelper");
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
-
-            log.debug("Clan Rank Helper: Connecting...");
-            int responseCode = conn.getResponseCode();
-            log.debug("Clan Rank Helper: Response code: {}", responseCode);
+            Request request = new Request.Builder()
+                .url(apiUrl)
+                .header("Accept", "application/json")
+                .header("User-Agent", "RuneLite-ClanRankHelper")
+                .build();
             
-            if (responseCode != 200)
+            try (Response response = okHttpClient.newCall(request).execute())
             {
-                log.error("Clan Rank Helper: API returned non-200 response: {}", responseCode);
-                return;
-            }
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null)
-            {
-                response.append(line);
-            }
-            reader.close();
-            conn.disconnect();
-
-            log.debug("Clan Rank Helper: Got response, parsing JSON...");
-            
-            // Parse the JSON response
-            Type listType = new TypeToken<List<RankEntry>>(){}.getType();
-            List<RankEntry> entries = gson.fromJson(response.toString(), listType);
-
-            if (entries == null)
-            {
-                log.error("Clan Rank Helper: Failed to parse JSON - entries is null");
-                return;
-            }
-
-            // Convert to map: playerName -> targetRank
-            Map<String, String> rankMap = new HashMap<>();
-            for (RankEntry entry : entries)
-            {
-                if (entry.mainRSN != null && !entry.mainRSN.isEmpty())
+                if (!response.isSuccessful())
                 {
-                    String normalizedName = entry.mainRSN.toLowerCase().trim();
-                    rankMap.put(normalizedName, entry.osrsName);
+                    log.error("Clan Rank Helper: API returned non-200 response: {}", response.code());
+                    return;
                 }
+
+                String responseBody = response.body().string();
+                log.debug("Clan Rank Helper: Got response, parsing JSON...");
+                
+                // Parse the JSON response
+                Type listType = new TypeToken<List<RankEntry>>(){}.getType();
+                List<RankEntry> entries = gson.fromJson(responseBody, listType);
+
+                if (entries == null)
+                {
+                    log.error("Clan Rank Helper: Failed to parse JSON - entries is null");
+                    return;
+                }
+
+                // Convert to map: playerName -> targetRank
+                Map<String, String> rankMap = new HashMap<>();
+                for (RankEntry entry : entries)
+                {
+                    if (entry.mainRSN != null && !entry.mainRSN.isEmpty())
+                    {
+                        String normalizedName = entry.mainRSN.toLowerCase().trim();
+                        rankMap.put(normalizedName, entry.osrsName);
+                    }
+                }
+
+                log.debug("Clan Rank Helper: Fetched {} pending rank changes", rankMap.size());
+                updateRankData(rankMap);
             }
-
-            log.debug("Clan Rank Helper: Fetched {} pending rank changes", rankMap.size());
-            updateRankData(rankMap);
-
         }
         catch (Exception e)
         {

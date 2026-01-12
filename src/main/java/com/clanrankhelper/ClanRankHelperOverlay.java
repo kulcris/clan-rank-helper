@@ -131,7 +131,7 @@ public class ClanRankHelperOverlay extends OverlayPanel
                     .leftColor(Color.GRAY)
                     .build());
                 panelComponent.getChildren().add(LineComponent.builder()
-                    .left("Clan - Settings - Members")
+                    .left("to check all")
                     .leftColor(Color.GRAY)
                     .build());
             }
