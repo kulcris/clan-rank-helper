@@ -18,16 +18,24 @@ public interface ClanRankHelperConfig extends Config
     String apiSection = "api";
 
     @ConfigSection(
+            name = "Sheets Customization ",
+            description = "Configure the API connection",
+            position = 1
+    )
+    String sheetsSection = "SheetsCustom";
+
+    @ConfigSection(
         name = "Display Settings",
         description = "Configure how rank changes are displayed",
-        position = 1
+        position = 2,
+        closedByDefault = true
     )
     String displaySection = "display";
 
     @ConfigSection(
         name = "Rank Colors",
         description = "Customize colors for each rank",
-        position = 2,
+        position = 3,
         closedByDefault = true
     )
     String rankColorsSection = "rankColors";
@@ -56,6 +64,42 @@ public interface ClanRankHelperConfig extends Config
     default String googleSheetsUrl()
     {
         return "";
+    }
+
+    @ConfigItem(
+            keyName = "sheetsRsnColumn",
+            name = "Sheets RSN column",
+            description = "number-based column index in the google sheet that contains the RSN/name (e.g., 1 = column A).",
+            section = sheetsSection,
+            position = 3
+    )
+    default int sheetsRsnColumn()
+    {
+        return 1;
+    }
+
+    @ConfigItem(
+            keyName = "sheetsRankColumn",
+            name = "Sheets rank column",
+            description = "number-based column index in the google sheet that contains the target rank (e.g., 2 = column B).",
+            section = sheetsSection,
+            position = 4
+    )
+    default int sheetsRankColumn()
+    {
+        return 2;
+    }
+
+    @ConfigItem(
+            keyName = "sheetsHasHeader",
+            name = "Sheets has header row",
+            description = "If enabled, the first row will be treated as a header and skipped.",
+            section = sheetsSection,
+            position = 5
+    )
+    default boolean sheetsHasHeader()
+    {
+        return true;
     }
 
     @ConfigItem(

@@ -163,26 +163,25 @@ public class ClanRankHelperPlugin extends Plugin
         
         log.debug("Clan Rank Helper: No API URL or Google Sheets URL configured");
     }
-    
+
     private void fetchFromGoogleSheets(String sheetsUrl)
     {
         try
         {
-            // Convert Google Sheets URL to CSV export URL
             String csvUrl = convertToCsvUrl(sheetsUrl);
             if (csvUrl == null)
             {
                 log.error("Clan Rank Helper: Invalid Google Sheets URL format");
                 return;
             }
-            
+
             log.debug("Clan Rank Helper: Fetching from Google Sheets: {}", csvUrl);
-            
+
             Request request = new Request.Builder()
-                .url(csvUrl)
-                .header("User-Agent", "RuneLite-ClanRankHelper")
-                .build();
-            
+                    .url(csvUrl)
+                    .header("User-Agent", "RuneLite-ClanRankHelper")
+                    .build();
+
             try (Response response = okHttpClient.newCall(request).execute())
             {
                 if (!response.isSuccessful())
@@ -190,41 +189,60 @@ public class ClanRankHelperPlugin extends Plugin
                     log.error("Clan Rank Helper: Google Sheets returned non-200 response: {}", response.code());
                     return;
                 }
-                
+
                 String responseBody = response.body().string();
                 Map<String, String> rankMap = new HashMap<>();
+
+                // 1-based -> 0-based
+                final int rsnIdx = Math.max(0, config.sheetsRsnColumn() - 1);
+                final int rankIdx = Math.max(0, config.sheetsRankColumn() - 1);
+                final boolean skipHeader = config.sheetsHasHeader();
+
                 BufferedReader reader = new BufferedReader(new StringReader(responseBody));
                 String line;
                 boolean firstLine = true;
-                
+
                 while ((line = reader.readLine()) != null)
                 {
-                    // Skip header row if it looks like a header
                     if (firstLine)
                     {
                         firstLine = false;
+
+                        // If user says header exists, skip it no matter what
+                        if (skipHeader)
+                        {
+                            continue;
+                        }
+
+                        // Otherwise, keep your old "looks like header" heuristic (optional)
                         String lowerLine = line.toLowerCase();
                         if (lowerLine.contains("rsn") || lowerLine.contains("name") || lowerLine.contains("rank"))
                         {
-                            continue; // Skip header
+                            // If you do NOT want any heuristics, delete this block.
+                            continue;
                         }
                     }
-                    
-                    // Parse CSV line (handle quoted values)
+
                     String[] parts = parseCsvLine(line);
-                    if (parts.length >= 2)
+
+                    // Need enough columns to read both indices
+                    int maxIdx = Math.max(rsnIdx, rankIdx);
+                    if (parts.length <= maxIdx)
                     {
-                        String rsn = parts[0].trim();
-                        String rank = parts[1].trim();
-                        
-                        if (!rsn.isEmpty() && !rank.isEmpty())
-                        {
-                            rankMap.put(rsn.toLowerCase(), rank);
-                        }
+                        continue;
+                    }
+
+                    String rsn = parts[rsnIdx].trim();
+                    String rank = parts[rankIdx].trim();
+
+                    if (!rsn.isEmpty() && !rank.isEmpty())
+                    {
+                        // Keep your existing behavior: normalize key for matching
+                        rankMap.put(rsn.toLowerCase(), rank);
                     }
                 }
                 reader.close();
-                
+
                 log.debug("Clan Rank Helper: Fetched {} entries from Google Sheets", rankMap.size());
                 updateRankData(rankMap);
             }
